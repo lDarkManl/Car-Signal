@@ -1,7 +1,7 @@
 import pika
 
 def main():
-	connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+	connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq', port=5672))
 	channel = connection.channel()
 
 	channel.exchange_declare(exchange='monitore', exchange_type='direct')

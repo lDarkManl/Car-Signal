@@ -7,7 +7,7 @@ class OpenCar:
 
 	def __init__(self):
 		self.connection = pika.BlockingConnection(
-			pika.ConnectionParameters(host='localhost')
+			pika.ConnectionParameters(host='rabbitmq', port=5672)
 		)
 
 		self.channel = self.connection.channel()
@@ -52,7 +52,7 @@ class CloseCar:
 
 	def __init__(self):
 		self.connection = pika.BlockingConnection(
-			pika.ConnectionParameters(host='localhost')
+			pika.ConnectionParameters(host='rabbitmq', port=5672)
 		)
 
 		self.channel = self.connection.channel()
@@ -97,7 +97,7 @@ class StartEngine:
 
 	def __init__(self):
 		self.connection = pika.BlockingConnection(
-			pika.ConnectionParameters(host='localhost')
+			pika.ConnectionParameters(host='rabbitmq', port=5672)
 		)
 
 		self.channel = self.connection.channel()
@@ -142,7 +142,7 @@ class GetFuel:
 
 	def __init__(self):
 		self.connection = pika.BlockingConnection(
-			pika.ConnectionParameters(host='localhost')
+			pika.ConnectionParameters(host='rabbitmq', port=5672)
 		)
 
 		self.channel = self.connection.channel()
@@ -187,7 +187,7 @@ class GetAccumulatorCharge:
 
 	def __init__(self):
 		self.connection = pika.BlockingConnection(
-			pika.ConnectionParameters(host='localhost')
+			pika.ConnectionParameters(host='rabbitmq', port=5672)
 		)
 
 		self.channel = self.connection.channel()
@@ -232,7 +232,7 @@ class SetTemperatureStartEngine:
 
 	def __init__(self):
 		self.connection = pika.BlockingConnection(
-			pika.ConnectionParameters(host='localhost')
+			pika.ConnectionParameters(host='rabbitmq', port=5672)
 		)
 
 		self.channel = self.connection.channel()

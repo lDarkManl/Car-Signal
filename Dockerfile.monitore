@@ -1,0 +1,7 @@
+FROM python:3.14-slim
+WORKDIR /app
+COPY car_rpc.py .
+COPY requirements.txt .
+COPY monitore.py .
+RUN pip install -r requirements.txt
+CMD ["python", "monitore.py"]
