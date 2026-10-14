@@ -7,7 +7,7 @@ class OpenCar:
 
 	def __init__(self):
 		self.connection = pika.BlockingConnection(
-			pika.ConnectionParameters(host='rabbitmq', port=5672)
+			pika.ConnectionParameters('localhost')
 		)
 
 		self.channel = self.connection.channel()
@@ -19,7 +19,7 @@ class OpenCar:
 
 		self.channel.basic_consume(
 			queue=self.queue_name,
-			on_message_callback=self.response,
+			on_message_callback=self._response,
 			auto_ack=True
 		)
 
@@ -42,7 +42,7 @@ class OpenCar:
 			self.connection.process_data_events(time_limit=None)
 		return self.response
 
-	def response(self, ch, method, props, body):
+	def _response(self, ch, method, props, body):
 		if self.corr_id == props.correlation_id:
 			self.response = body
 
@@ -52,7 +52,7 @@ class CloseCar:
 
 	def __init__(self):
 		self.connection = pika.BlockingConnection(
-			pika.ConnectionParameters(host='rabbitmq', port=5672)
+			pika.ConnectionParameters('localhost')
 		)
 
 		self.channel = self.connection.channel()
@@ -64,7 +64,7 @@ class CloseCar:
 
 		self.channel.basic_consume(
 			queue=self.queue_name,
-			on_message_callback=self.response,
+			on_message_callback=self._response,
 			auto_ack=True
 		)
 
@@ -87,7 +87,7 @@ class CloseCar:
 			self.connection.process_data_events(time_limit=None)
 		return self.response
 
-	def response(self, ch, method, props, body):
+	def _response(self, ch, method, props, body):
 		if self.corr_id == props.correlation_id:
 			self.response = body
 
@@ -97,7 +97,7 @@ class StartEngine:
 
 	def __init__(self):
 		self.connection = pika.BlockingConnection(
-			pika.ConnectionParameters(host='rabbitmq', port=5672)
+			pika.ConnectionParameters('localhost')
 		)
 
 		self.channel = self.connection.channel()
@@ -109,11 +109,11 @@ class StartEngine:
 
 		self.channel.basic_consume(
 			queue=self.queue_name,
-			on_message_callback=self.response,
+			on_message_callback=self._response,
 			auto_ack=True
 		)
 
-	def __call__(self):
+	def __call__(self, wait=True):
 		self.corr_id = str(uuid.uuid4())
 
 		self.channel.basic_publish(
@@ -126,13 +126,14 @@ class StartEngine:
 			body=''
 		)
 
-		self.response = None
+		if wait:
+			self.response = None
 
-		while self.response is None:
-			self.connection.process_data_events(time_limit=None)
-		return self.response
+			while self.response is None:
+				self.connection.process_data_events(time_limit=None)
+			return self.response
 
-	def response(self, ch, method, props, body):
+	def _response(self, ch, method, props, body):
 		if self.corr_id == props.correlation_id:
 			self.response = body
 
@@ -142,7 +143,7 @@ class GetFuel:
 
 	def __init__(self):
 		self.connection = pika.BlockingConnection(
-			pika.ConnectionParameters(host='rabbitmq', port=5672)
+			pika.ConnectionParameters('localhost')
 		)
 
 		self.channel = self.connection.channel()
@@ -154,7 +155,7 @@ class GetFuel:
 
 		self.channel.basic_consume(
 			queue=self.queue_name,
-			on_message_callback=self.response,
+			on_message_callback=self._response,
 			auto_ack=True
 		)
 
@@ -177,7 +178,7 @@ class GetFuel:
 			self.connection.process_data_events(time_limit=None)
 		return self.response
 
-	def response(self, ch, method, props, body):
+	def _response(self, ch, method, props, body):
 		if self.corr_id == props.correlation_id:
 			self.response = body
 
@@ -187,7 +188,7 @@ class GetAccumulatorCharge:
 
 	def __init__(self):
 		self.connection = pika.BlockingConnection(
-			pika.ConnectionParameters(host='rabbitmq', port=5672)
+			pika.ConnectionParameters('localhost')
 		)
 
 		self.channel = self.connection.channel()
@@ -199,7 +200,7 @@ class GetAccumulatorCharge:
 
 		self.channel.basic_consume(
 			queue=self.queue_name,
-			on_message_callback=self.response,
+			on_message_callback=self._response,
 			auto_ack=True
 		)
 
@@ -222,7 +223,7 @@ class GetAccumulatorCharge:
 			self.connection.process_data_events(time_limit=None)
 		return self.response
 
-	def response(self, ch, method, props, body):
+	def _response(self, ch, method, props, body):
 		if self.corr_id == props.correlation_id:
 			self.response = body
 
@@ -232,7 +233,7 @@ class SetTemperatureStartEngine:
 
 	def __init__(self):
 		self.connection = pika.BlockingConnection(
-			pika.ConnectionParameters(host='rabbitmq', port=5672)
+			pika.ConnectionParameters('localhost')
 		)
 
 		self.channel = self.connection.channel()
@@ -244,7 +245,7 @@ class SetTemperatureStartEngine:
 
 		self.channel.basic_consume(
 			queue=self.queue_name,
-			on_message_callback=self.response,
+			on_message_callback=self._response,
 			auto_ack=True
 		)
 
@@ -267,6 +268,6 @@ class SetTemperatureStartEngine:
 			self.connection.process_data_events(time_limit=None)
 		return self.response
 
-	def response(self, ch, method, props, body):
+	def _response(self, ch, method, props, body):
 		if self.corr_id == props.correlation_id:
 			self.response = body

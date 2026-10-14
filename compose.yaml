@@ -17,6 +17,8 @@ services:
       dockerfile: Dockerfile.car_management
     depends_on:
       - rabbitmq
+    environment:
+      PYTHONUNBUFFERED: "1"
 
   monitore:
     build:
@@ -24,5 +26,7 @@ services:
       dockerfile: Dockerfile.monitore
     depends_on:
       - rabbitmq
+    environment:
+      PYTHONUNBUFFERED: "1"
 
 

@@ -2,7 +2,7 @@ import pika
 from car_rpc import GetFuel, GetAccumulatorCharge
 
 def main():
-	connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq', port=5672))
+	connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
 	channel = connection.channel()
 
 	channel.exchange_declare(exchange='management', exchange_type='direct')
