@@ -8,6 +8,8 @@ class Monitore:
         self.fuel = 5.0
         self.accumulator_charge = 13.0
         self.temperature = -20
+        self.oil_temp = 50
+        self.engine_temp = 40
         self.temperature_start_engine = -21
 
         self.started = 0
@@ -20,6 +22,12 @@ class Monitore:
 
     def get_temperature(self, body=None):
     	return str(self.temperature)
+
+    def get_oil_temp(self, body=None):
+    	return str(self.oil_temp)
+
+    def get_engine_temp(self, body=None):
+    	return str(self.engine_temp)
 
     def set_temperature_start_engine(self, temperature):
         self.temperature_start_engine = float(temperature.decode('utf-8'))
@@ -48,6 +56,8 @@ def main():
 	channel.queue_bind(exchange='monitore', queue=queue_name, routing_key='get_fuel')
 	channel.queue_bind(exchange='monitore', queue=queue_name, routing_key='get_accumulator_charge')
 	channel.queue_bind(exchange='monitore', queue=queue_name, routing_key='get_temperature')
+	channel.queue_bind(exchange='monitore', queue=queue_name, routing_key='get_oil_temp')
+	channel.queue_bind(exchange='monitore', queue=queue_name, routing_key='get_engine_temp')
 
 	channel.basic_consume(queue=queue_name, on_message_callback=callback, auto_ack=True)
 
@@ -61,7 +71,9 @@ def callback(ch, method, properties, body):
 		'set_temperature_start_engine': monitore.set_temperature_start_engine,
 		'get_fuel': monitore.get_fuel,
 		'get_accumulator_charge': monitore.get_accumulator_charge,
-		'get_temperature': monitore.get_temperature
+		'get_temperature': monitore.get_temperature,
+		'get_oil_temp': monitore.get_oil_temp,
+		'get_engine_temp': monitore.get_engine_temp,
 	}
 
 	result = routing_key_map[method.routing_key](body)

@@ -13,6 +13,7 @@ def main():
 	queue_name = queue.method.queue
 
 	channel.queue_bind(exchange='management', queue=queue_name, routing_key='open')
+	channel.queue_bind(exchange='management', queue=queue_name, routing_key='open_windows')
 	channel.queue_bind(exchange='management', queue=queue_name, routing_key='close')
 	channel.queue_bind(exchange='management', queue=queue_name, routing_key='start_engine')
 
@@ -24,6 +25,7 @@ def callback(ch, method, properties, body):
 		'open': open_car,
 		'close': close_car,
 		'start_engine': start_engine,
+		'open_windows': open_windows,
 	}
 
 	result = routing_key_map[method.routing_key]()
@@ -52,6 +54,10 @@ def start_engine():
 
 	print('engine started')
 	return 'engine started'
+
+def open_windows():
+	print('windows opened')
+	return 'windows opened'
 
 
 if __name__ == '__main__':

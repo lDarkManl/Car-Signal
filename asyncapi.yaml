@@ -1,0 +1,83 @@
+asyncapi: '3.0.0'
+info:
+  title: User Update System
+  version: '1.0.0'
+  description: Асинхронный API для обновления информации о пользователе через RabbitMQ.
+
+servers:
+  production:
+    host: amqp://rabbitmq-server:5672
+    protocol: amqp
+    description: Сервер RabbitMQ для обработки сообщений об обновлениях пользователей.
+
+channels:
+  queue_1:
+    address: queue_1
+    messages:
+      userUpdated:
+        $ref: '#/components/messages/UserUpdated'
+    description: Очередь на прием данных на обновление пользователей.
+
+operations:
+  publishUserUpdate:
+    action: send
+    channel: 
+       $ref: '#/channels/queue_1'
+    summary: Публикация обновления данных пользоателя
+    description: Сервис service_1 публикует сообщение об обновлении пользователя
+
+
+  consumeUserUpdate:
+    action: receive
+    channel: 
+       $ref: '#/channels/queue_1'
+    summary: Потребление обновления данных пользоателя
+    description: Сервис service_2 потребляет сообщение об обновлении пользователя
+
+
+components:
+  messages:
+    UserUpdated:
+      name: UserUpdate
+      title: Обновлене пользоателя
+      summary: Сообщение с обновленными данными пользователя
+      contentType: 'application/json'
+      payload:
+        type: 'object'
+        properties:
+        $ref: '#/components/schemas/UserUpdatePayload'
+
+
+  schemas: 
+    UserUpdatePayload:
+        type: 'object'
+        properties:
+          payload:
+            type: 'object'
+            properties:
+              name:
+                type: 'string'
+                description: 'Имя пользователя'
+              address:
+                type: 'string'
+                description: 'Адрес пользователя'
+          user_id:
+            type: 'string'
+            description: 'Id пользователя для поиска в таблице'
+
+  x-services:
+    Service_1:
+      description: Сервис управления данными пользователей
+      operations:
+        - $ref: '#/operations/publishUserUpdate'
+
+
+    Service_2: 
+      description: Сервис получения обновленных данных пользователей
+      operations:
+        - $ref: '#/operations/consumeUserUpdate'
+      x-actions: 
+        - update-users-table:
+            description: Обновляет данные пользователя в таблице Users_table
+        - send-super-service-3: 
+            description: Отправляет PATCH запрос в Super_Service_3 /users/{user_id} по полученному user_id
